@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio | Web Developer & Video Editor</title>
+    <meta name="description" content="Cinematic interactive portfolio of a Web Developer & Video Editor. Explore projects, skills, and creative work through an immersive 3D experience.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- ============================================= -->
+    <!-- THREE.JS CANVAS (Background 3D Scene)         -->
+    <!-- ============================================= -->
+    <canvas id="three-canvas"></canvas>
+
+    <!-- ============================================= -->
+    <!-- LOADING SCREEN                                -->
+    <!-- ============================================= -->
+    <div id="loader">
+        <div class="loader-inner">
+            <div class="loader-ring"></div>
+            <div class="loader-ring"></div>
+            <div class="loader-ring"></div>
+            <div class="loader-text">
+                <span class="loader-label">INITIALIZING</span>
+                <div class="loader-progress-bar">
+                    <div class="loader-progress-fill" id="loaderFill"></div>
+                </div>
+                <span class="loader-percent" id="loaderPercent">0%</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================= -->
+    <!-- SCENE 1: THE DOOR (Entry)                     -->
+    <!-- ============================================= -->
+    <div id="scene-door" class="scene">
+        <div class="door-container">
+            <div class="door-frame">
+                <div class="door door-left">
+                    <div class="door-handle"></div>
+                    <div class="door-light"></div>
+                </div>
+                <div class="door door-right">
+                    <div class="door-handle"></div>
+                    <div class="door-light"></div>
+                </div>
+            </div>
+            <div class="door-glow"></div>
+        </div>
+        <p class="door-hint">Click to Enter the Studio</p>
+    </div>
+
+    <!-- ============================================= -->
+    <!-- SCENE 2: DEVELOPER WORKSPACE                  -->
+    <!-- ============================================= -->
+    <div id="scene-workspace" class="scene hidden">
+        <div class="workspace-room">
+            <!-- RGB ambient lights -->
+            <div class="rgb-light rgb-1"></div>
+            <div class="rgb-light rgb-2"></div>
+            <div class="rgb-light rgb-3"></div>
+
+            <!-- The desk setup -->
+            <div class="desk-setup">
+                <div class="monitor-frame">
+                    <div class="monitor-screen" id="codeScreen">
+                        <div class="monitor-topbar">
+                            <div class="topbar-dots">
+                                <span class="dot dot-red"></span>
+                                <span class="dot dot-yellow"></span>
+                                <span class="dot dot-green"></span>
+                            </div>
+                            <span class="topbar-title">portfolio.js — VS Code</span>
+                            <div class="topbar-actions">
+                                <i class="fas fa-minus"></i>
+                                <i class="fas fa-square"></i>
+                                <i class="fas fa-times"></i>
+                            </div>
+                        </div>
+                        <div class="monitor-body">
+                            <div class="code-sidebar">
+                                <div class="sidebar-icon active"><i class="fas fa-file-code"></i></div>
+                                <div class="sidebar-icon"><i class="fas fa-search"></i></div>
+                                <div class="sidebar-icon"><i class="fas fa-code-branch"></i></div>
+                                <div class="sidebar-icon"><i class="fas fa-bug"></i></div>
+                                <div class="sidebar-icon"><i class="fas fa-puzzle-piece"></i></div>
+                            </div>
+                            <div class="code-line-numbers" id="lineNumbers"></div>
+                            <div class="code-content" id="codeContent">
+                                <div class="cursor-blink" id="cursor"></div>
+                            </div>
+                        </div>
+                        <div class="monitor-terminal" id="terminal">
+                            <div class="terminal-header">
+                                <span>TERMINAL</span>
+                                <span class="terminal-type">powershell</span>
+                            </div>
+                            <div class="terminal-body" id="terminalBody"></div>
+                        </div>
+                    </div>
+                    <div class="monitor-stand"></div>
+                    <div class="monitor-base"></div>
+                    <div class="screen-glow"></div>
+                </div>
+
+                <!-- Keyboard -->
+                <div class="keyboard">
+                    <div class="keyboard-body">
+                        <div class="key-row" id="keyboardKeys"></div>
+                    </div>
+                    <div class="keyboard-glow"></div>
+                </div>
+
+                <!-- Coffee mug -->
+                <div class="coffee-mug">
+                    <div class="mug-body"></div>
+                    <div class="mug-handle"></div>
+                    <div class="steam">
+                        <div class="steam-line s1"></div>
+                        <div class="steam-line s2"></div>
+                        <div class="steam-line s3"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Developer character (stylized) -->
+            <div class="developer-character" id="devCharacter">
+                <div class="char-head">
+                    <div class="char-face">
+                        <div class="char-eyes">
+                            <div class="char-eye left"></div>
+                            <div class="char-eye right"></div>
+                        </div>
+                    </div>
+                    <div class="char-hair"></div>
+                </div>
+                <div class="char-body">
+                    <div class="char-hoodie"></div>
+                    <div class="char-arm left-arm"></div>
+                    <div class="char-arm right-arm"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Welcome text overlay -->
+        <div class="welcome-overlay" id="welcomeOverlay">
+            <h2 class="welcome-line line1">Welcome to my portfolio.</h2>
+            <h3 class="welcome-line line2">Let's build something amazing.</h3>
+            <button class="enter-btn" id="enterPortfolioBtn">
+                <span>Enter Portfolio</span>
+                <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- ============================================= -->
+    <!-- SCENE 3: CODE TRANSFORMATION                  -->
+    <!-- ============================================= -->
+    <div id="scene-transform" class="scene hidden">
+        <div class="floating-code-lines" id="floatingCode"></div>
+        <div class="transform-flash"></div>
+    </div>
+
+    <!-- ============================================= -->
+    <!-- MAIN PORTFOLIO WEBSITE                        -->
+    <!-- ============================================= -->
+    <div id="portfolio" class="hidden">
+
+        <!-- Navigation -->
+        <nav id="mainNav" class="main-nav">
+            <div class="nav-logo">
+                <span class="logo-bracket">&lt;</span>
+                <span class="logo-text">Dev</span>
+                <span class="logo-bracket">/&gt;</span>
+            </div>
+            <div class="nav-links">
+                <a href="#hero" class="nav-link active">Home</a>
+                <a href="#about" class="nav-link">About</a>
+                <a href="#skills" class="nav-link">Skills</a>
+                <a href="#projects" class="nav-link">Projects</a>
+                <a href="#video-studio" class="nav-link">Studio</a>
+                <a href="#contact" class="nav-link">Contact</a>
+            </div>
+            <div class="nav-hamburger" id="hamburger">
+                <span></span><span></span><span></span>
+            </div>
+        </nav>
+
+        <!-- Mobile Menu -->
+        <div class="mobile-menu" id="mobileMenu">
+            <a href="#hero" class="mobile-link">Home</a>
+            <a href="#about" class="mobile-link">About</a>
+            <a href="#skills" class="mobile-link">Skills</a>
+            <a href="#projects" class="mobile-link">Projects</a>
+            <a href="#video-studio" class="mobile-link">Studio</a>
+            <a href="#contact" class="mobile-link">Contact</a>
+        </div>
+
+        <!-- ===== HERO SECTION ===== -->
+        <section id="hero" class="section hero-section">
+            <div class="hero-bg-image"></div>
+            <div class="hero-overlay"></div>
+            <div class="hero-particles" id="heroParticles"></div>
+            <div class="hero-content">
+                <div class="hero-badge" style="display:none;">
+                    <span class="badge-dot"></span>
+                    Available for Work
+                </div>
+                <h1 class="hero-title">
+                    <span class="hero-greeting">Hi, I'm</span>
+                    <span class="hero-name" id="heroName">Deekshith</span>
+                </h1>
+                <div class="hero-roles" id="heroRoles">
+                    <span class="role-text">Web Developer</span>
+                    <span class="role-separator">•</span>
+                    <span class="role-text">Creative Editor</span>
+                </div>
+                <p class="hero-description">
+                    I craft pixel-perfect digital experiences and cinematic visual stories that captivate and inspire.
+                </p>
+                <div class="hero-cta">
+                    <a href="#projects" class="cta-primary">
+                        <span>View My Work</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                    <a href="#contact" class="cta-secondary">
+                        <span>Get in Touch</span>
+                    </a>
+                </div>
+            </div>
+            <div class="scroll-indicator">
+                <div class="scroll-mouse">
+                    <div class="scroll-wheel"></div>
+                </div>
+                <span>Scroll Down</span>
+            </div>
+        </section>
+
+        <!-- ===== ABOUT SECTION ===== -->
+        <section id="about" class="section about-section">
+            <div class="section-header">
+                <span class="section-tag">&lt;about&gt;</span>
+                <h2 class="section-title">About Me</h2>
+                <div class="section-line"></div>
+            </div>
+            <div class="about-grid">
+                <div class="about-image-wrapper">
+                    <div class="about-image-frame">
+                        <img src="assets/profile.png" alt="Developer" class="about-image">
+                        <div class="about-image-border"></div>
+                    </div>
+                    <div class="about-float-card card-exp">
+                        <span class="float-number">3+</span>
+                        <span class="float-label">Years Exp</span>
+                    </div>
+                    <div class="about-float-card card-projects">
+                        <span class="float-number">50+</span>
+                        <span class="float-label">Projects</span>
+                    </div>
+                </div>
+                <div class="about-content">
+                    <h3 class="about-subtitle">Web Developer & Creative Editor</h3>
+                    <p class="about-text">
+                        I'm a passionate web developer and video editor who loves creating immersive digital experiences. 
+                        With over 3 years of experience, I specialize in building modern websites, interactive applications, 
+                        and cinematic video content that stands out.
+                    </p>
+                    <p class="about-text">
+                        My goal is to merge technology and creativity to deliver solutions that not only function flawlessly 
+                        but also tell a compelling visual story.
+                    </p>
+                    <div class="about-stats">
+                        <div class="stat-item">
+                            <span class="stat-number" data-target="50">0</span>
+                            <span class="stat-label">Projects Done</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" data-target="30">0</span>
+                            <span class="stat-label">Happy Clients</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" data-target="10">0</span>
+                            <span class="stat-label">Technologies</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" data-target="3">0</span>
+                            <span class="stat-label">Years Experience</span>
+                        </div>
+                    </div>
+                    <a href="#contact" class="about-cta">
+                        <span>Let's Work Together</span>
+                        <i class="fas fa-handshake"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== SKILLS SECTION ===== -->
+        <section id="skills" class="section skills-section">
+            <div class="section-header">
+                <span class="section-tag">&lt;skills&gt;</span>
+                <h2 class="section-title">My Skills</h2>
+                <div class="section-line"></div>
+            </div>
+            <div class="skills-grid">
+                <div class="skill-category">
+                    <h3 class="skill-cat-title"><i class="fas fa-code"></i> Development</h3>
+                    <div class="skill-bar-group">
+                        <div class="skill-bar-item" data-skill="95">
+                            <div class="skill-info"><span>HTML5</span><span class="skill-percent">95%</span></div>
+                            <div class="skill-track"><div class="skill-fill html"></div></div>
+                        </div>
+                        <div class="skill-bar-item" data-skill="90">
+                            <div class="skill-info"><span>CSS3 / SASS</span><span class="skill-percent">90%</span></div>
+                            <div class="skill-track"><div class="skill-fill css"></div></div>
+                        </div>
+                        <div class="skill-bar-item" data-skill="85">
+                            <div class="skill-info"><span>JavaScript</span><span class="skill-percent">85%</span></div>
+                            <div class="skill-track"><div class="skill-fill js"></div></div>
+                        </div>
+                        <div class="skill-bar-item" data-skill="80">
+                            <div class="skill-info"><span>React.js</span><span class="skill-percent">80%</span></div>
+                            <div class="skill-track"><div class="skill-fill react"></div></div>
+                        </div>
+                        <div class="skill-bar-item" data-skill="75">
+                            <div class="skill-info"><span>Node.js</span><span class="skill-percent">75%</span></div>
+                            <div class="skill-track"><div class="skill-fill node"></div></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="skill-category">
+                    <h3 class="skill-cat-title"><i class="fas fa-film"></i> Creative</h3>
+                    <div class="skill-bar-group">
+                        <div class="skill-bar-item" data-skill="90">
+                            <div class="skill-info"><span>Video Editing</span><span class="skill-percent">90%</span></div>
+                            <div class="skill-track"><div class="skill-fill video"></div></div>
+                        </div>
+                        <div class="skill-bar-item" data-skill="85">
+                            <div class="skill-info"><span>Motion Graphics</span><span class="skill-percent">85%</span></div>
+                            <div class="skill-track"><div class="skill-fill motion"></div></div>
+                        </div>
+                        <div class="skill-bar-item" data-skill="80">
+                            <div class="skill-info"><span>Color Grading</span><span class="skill-percent">80%</span></div>
+                            <div class="skill-track"><div class="skill-fill color"></div></div>
+                        </div>
+                        <div class="skill-bar-item" data-skill="75">
+                            <div class="skill-info"><span>After Effects</span><span class="skill-percent">75%</span></div>
+                            <div class="skill-track"><div class="skill-fill ae"></div></div>
+                        </div>
+                        <div class="skill-bar-item" data-skill="85">
+                            <div class="skill-info"><span>Premiere Pro</span><span class="skill-percent">85%</span></div>
+                            <div class="skill-track"><div class="skill-fill premiere"></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== PROJECTS SECTION ===== -->
+        <section id="projects" class="section projects-section">
+            <div class="section-header">
+                <span class="section-tag">&lt;projects&gt;</span>
+                <h2 class="section-title">Featured Projects</h2>
+                <div class="section-line"></div>
+            </div>
+            <div class="projects-grid">
+                <div class="project-card" data-tilt>
+                    <div class="project-image">
+                        <img src="assets/project1.png" alt="SaaS Dashboard">
+                        <div class="project-overlay">
+                            <div class="project-links">
+                                <a href="#" class="project-link"><i class="fas fa-external-link-alt"></i></a>
+                                <a href="#" class="project-link"><i class="fab fa-github"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="project-info">
+                        <h3>SaaS Analytics Dashboard</h3>
+                        <p>Real-time data visualization platform with interactive charts and AI-powered insights.</p>
+                        <div class="project-tags">
+                            <span>React</span><span>Node.js</span><span>D3.js</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="project-card" data-tilt>
+                    <div class="project-image">
+                        <img src="assets/project2.png" alt="Social App">
+                        <div class="project-overlay">
+                            <div class="project-links">
+                                <a href="#" class="project-link"><i class="fas fa-external-link-alt"></i></a>
+                                <a href="#" class="project-link"><i class="fab fa-github"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="project-info">
+                        <h3>Social Connect App</h3>
+                        <p>Feature-rich social media application with real-time messaging and story features.</p>
+                        <div class="project-tags">
+                            <span>React Native</span><span>Firebase</span><span>Redux</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="project-card" data-tilt>
+                    <div class="project-image">
+                        <img src="assets/project3.png" alt="E-Commerce">
+                        <div class="project-overlay">
+                            <div class="project-links">
+                                <a href="#" class="project-link"><i class="fas fa-external-link-alt"></i></a>
+                                <a href="#" class="project-link"><i class="fab fa-github"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="project-info">
+                        <h3>Luxury E-Commerce</h3>
+                        <p>Premium online store with 3D product visualization and AI-powered recommendations.</p>
+                        <div class="project-tags">
+                            <span>Next.js</span><span>Three.js</span><span>Stripe</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== VIDEO STUDIO SECTION ===== -->
+        <section id="video-studio" class="section studio-section">
+            <div class="studio-bg">
+                <img src="assets/video-editing.png" alt="Video Editing Studio">
+            </div>
+            <div class="studio-overlay"></div>
+            <div class="studio-content">
+                <div class="section-header light">
+                    <span class="section-tag">&lt;studio&gt;</span>
+                    <h2 class="section-title">Video Editing Studio</h2>
+                    <div class="section-line"></div>
+                </div>
+                <p class="studio-text">I also create cinematic videos and edits.</p>
+                <div class="studio-stats">
+                    <div class="studio-stat">
+                        <i class="fas fa-film"></i>
+                        <span class="studio-stat-num" data-target="100">0</span>
+                        <span class="studio-stat-label">Videos Edited</span>
+                    </div>
+                    <div class="studio-stat">
+                        <i class="fas fa-magic"></i>
+                        <span class="studio-stat-num" data-target="50">0</span>
+                        <span class="studio-stat-label">Motion Graphics</span>
+                    </div>
+                    <div class="studio-stat">
+                        <i class="fas fa-palette"></i>
+                        <span class="studio-stat-num" data-target="75">0</span>
+                        <span class="studio-stat-label">Color Grades</span>
+                    </div>
+                </div>
+                <div class="studio-services">
+                    <div class="studio-service-card">
+                        <i class="fas fa-cut"></i>
+                        <h4>Video Editing</h4>
+                        <p>Professional cuts, transitions, and storytelling</p>
+                    </div>
+                    <div class="studio-service-card">
+                        <i class="fas fa-wand-magic-sparkles"></i>
+                        <h4>Motion Graphics</h4>
+                        <p>Animated intros, lower thirds, and visual effects</p>
+                    </div>
+                    <div class="studio-service-card">
+                        <i class="fas fa-adjust"></i>
+                        <h4>Color Grading</h4>
+                        <p>Cinematic looks and professional color correction</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Animated timeline decoration -->
+            <div class="timeline-decoration">
+                <div class="timeline-track">
+                    <div class="timeline-clip c1"></div>
+                    <div class="timeline-clip c2"></div>
+                    <div class="timeline-clip c3"></div>
+                    <div class="timeline-clip c4"></div>
+                    <div class="timeline-clip c5"></div>
+                </div>
+                <div class="timeline-playhead"></div>
+            </div>
+        </section>
+
+        <!-- ===== CONTACT SECTION ===== -->
+        <section id="contact" class="section contact-section">
+            <div class="section-header">
+                <span class="section-tag">&lt;contact&gt;</span>
+                <h2 class="section-title">Get In Touch</h2>
+                <div class="section-line"></div>
+            </div>
+            <div class="contact-grid">
+                <div class="contact-info">
+                    <h3>Let's create something amazing together</h3>
+                    <p>Whether you need a website, application, or video content — I'm ready to bring your vision to life.</p>
+                    <div class="contact-details">
+                        <div class="contact-detail-item">
+                            <i class="fas fa-envelope"></i>
+                            <span>deekshud749@gmail.com</span>
+                        </div>
+                        <div class="contact-detail-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>India</span>
+                        </div>
+                    </div>
+
+                </div>
+                <form class="contact-form" id="contactForm">
+                    <div class="form-group">
+                        <input type="text" id="formName" placeholder=" " required>
+                        <label for="formName">Your Name</label>
+                        <div class="form-line"></div>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" id="formEmail" placeholder=" " required>
+                        <label for="formEmail">Your Email</label>
+                        <div class="form-line"></div>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="formSubject" placeholder=" ">
+                        <label for="formSubject">Subject</label>
+                        <div class="form-line"></div>
+                    </div>
+                    <div class="form-group">
+                        <textarea id="formMessage" placeholder=" " rows="4" required></textarea>
+                        <label for="formMessage">Your Message</label>
+                        <div class="form-line"></div>
+                    </div>
+                    <button type="submit" class="form-submit">
+                        <span>Send Message</span>
+                        <i class="fas fa-paper-plane"></i>
+                        <div class="btn-glow"></div>
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- ===== FOOTER ===== -->
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <span class="logo-bracket">&lt;</span>
+                    <span class="logo-text">Dev</span>
+                    <span class="logo-bracket">/&gt;</span>
+                </div>
+                <p>&copy; 2026 All rights reserved. Crafted with passion.</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Custom cursor -->
+    <div class="custom-cursor" id="cursor-dot"></div>
+    <div class="custom-cursor-outline" id="cursor-outline"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
